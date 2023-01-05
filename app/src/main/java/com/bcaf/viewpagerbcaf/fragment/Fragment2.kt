@@ -1,11 +1,19 @@
 package com.bcaf.viewpagerbcaf.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bcaf.viewpagerbcaf.R
+import com.bcaf.viewpagerbcaf.data.model.User
+import com.devhoony.lottieproegressdialog.LottieProgressDialog
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.fragment_2.*
+import kotlinx.android.synthetic.main.fragment_2.view.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +30,8 @@ class Fragment2 : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    lateinit var dialog :LottieProgressDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -35,7 +45,63 @@ class Fragment2 : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_2, container, false)
+        val view  =  inflater.inflate(R.layout.fragment_2, container, false)
+
+        dialog= LottieProgressDialog(
+            context = requireContext(),
+            isCancel = true,
+            dialogWidth = null,
+            dialogHeight = null,
+            animationViewWidth = null,
+            animationViewHeight = null,
+            fileName = LottieProgressDialog.SAMPLE_1,
+            title = null,
+            titleVisible = null
+        )
+
+
+
+        view.btnAddData.setOnClickListener(View.OnClickListener {
+
+            save_data(User(txtAddNama.text.toString(),
+                txtAddAlamat.text.toString(),txtAddTelp.text.toString()))
+
+        })
+
+
+        return view
+    }
+
+
+    fun save_data(data:User){
+       dialog.show()
+        val db = Firebase.firestore
+
+        val user = hashMapOf(
+            "nama" to data.name,
+            "alamat" to data.alamat,
+            "telepon" to data.telepon
+
+        )
+        db.collection("User")
+            .add(user)
+            .addOnSuccessListener {
+                documentRef ->
+                Log.d("Succes add data" , documentRef.toString())
+                clearText()
+                dialog.hide()
+            }
+            .addOnFailureListener {
+                e->
+                Log.e("Error add data", e.toString())
+                dialog.hide()
+            }
+    }
+
+    fun clearText(){
+        txtAddAlamat.setText("")
+        txtAddNama.setText("")
+        txtAddTelp.setText("")
     }
 
     companion object {

@@ -1,11 +1,22 @@
 package com.bcaf.viewpagerbcaf.fragment
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.bcaf.viewpagerbcaf.LoginActivity
+import com.bcaf.viewpagerbcaf.MainActivity
 import com.bcaf.viewpagerbcaf.R
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.fragment_1.*
+import kotlinx.android.synthetic.main.fragment_1.view.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,20 +33,56 @@ class Fragment1 : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+    }
+
+
+    private lateinit var firebaseAuth: FirebaseAuth
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_1, container, false)
+       val view = inflater.inflate(R.layout.fragment_1, container, false)
+        FirebaseApp.initializeApp(requireContext())
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("1044960594484-9m80f06s2190r2s7g7ue3i7jhasfd3pd.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+
+        var mGoogleSignInClient = GoogleSignIn.getClient(requireContext(),gso)
+
+        view.btnLogout.setOnClickListener(View.OnClickListener {
+            Toast.makeText(context,"Logout",Toast.LENGTH_LONG).show()
+
+            mGoogleSignInClient.signOut().addOnCompleteListener {
+                firebaseAuth.currentUser?.delete()
+                firebaseAuth.signOut()
+
+                startActivity(Intent(context, LoginActivity::class.java))
+                activity?.finish()
+            }
+
+
+
+        })
+        return view
     }
 
     companion object {
