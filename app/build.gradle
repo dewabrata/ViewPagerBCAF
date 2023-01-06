@@ -47,6 +47,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.1'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
@@ -63,8 +64,15 @@ dependencies {
 
     //dialog
     implementation 'com.github.welcome2c:LottieProgressDialog:1.0.1'
-
-
+    //camera
+    dependencies {
+        implementation "com.github.dIvYaNshhh:android-image-picker:1.0.3"
+    }
+//glide
+    dependencies {
+        implementation 'com.github.bumptech.glide:glide:4.14.2'
+        annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+    }
 
 //A4:23:3D:CC:91:5A:91:C2:7D:39:DB:70:D7:20:4D:64:EF:C0:99:68
 //keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android

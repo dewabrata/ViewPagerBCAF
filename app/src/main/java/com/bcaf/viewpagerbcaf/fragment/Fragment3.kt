@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcaf.bcafrecycleview.adapter.BCAFAdapter
 import com.bcaf.viewpagerbcaf.R
+import com.bcaf.viewpagerbcaf.interfaces.BCAFListListener
 import com.bcaf.viewpagerbcaf.data.model.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_3.*
-import kotlinx.android.synthetic.main.fragment_3.view.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,7 +25,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [Fragment3.newInstance] factory method to
  * create an instance of this fragment.
  */
-class Fragment3 : Fragment() {
+class Fragment3 : Fragment() , BCAFListListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -65,18 +65,26 @@ class Fragment3 : Fragment() {
             .addOnSuccessListener { result ->
                 for (document in result) {
 
-                    datas.add(User(document.data.get("nama").toString(),document.data.get("alamat").toString(),document.data.get("telepon").toString()))
+
+                    datas.add(User( document.id,document.data.get("nama").toString(),document.data.get("alamat")
+                    .toString(),document.data.get("telepon").toString(),document.data.get("gambar").toString()))
                     document.data.get("nama")
                     var adapterBcaf = BCAFAdapter(datas)
+                    adapterBcaf.setListener(this)
                     recyclerView.apply {
                         layoutManager = LinearLayoutManager(requireContext())
                         adapter = adapterBcaf
                     }
+
+
+
+
                 }
             }
             .addOnFailureListener { exception ->
                 Log.w("Error", "Error getting documents.", exception)
             }
+
 
     }
 
@@ -99,4 +107,10 @@ class Fragment3 : Fragment() {
                 }
             }
     }
+
+    override fun onRefresh() {
+        loadData()
+    }
+
+
 }
